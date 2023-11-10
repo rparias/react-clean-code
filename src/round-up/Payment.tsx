@@ -1,35 +1,22 @@
-import { useEffect, useState } from 'react'
-
-function calculateRoundUp(amount: number) {
-  return Math.floor(amount + 1)
-}
-
-function calculateTip(amount: number) {
-  return parseFloat((calculateRoundUp(amount) - amount).toPrecision(2))
-}
+import { useState } from 'react'
+import { useRoundUp } from './useRoundUp'
 
 const Payment = ({ amount }: { amount: number }) => {
-  const [total, setTotal] = useState(amount)
-  const [checked, setChecked] = useState(false)
-  const [tip, setTip] = useState(0)
+  const [agreeOnDonate, setAgreeOnDonate] = useState(false)
+  const { total, tip } = useRoundUp(amount, agreeOnDonate)
 
   const handleChange = () => {
-    setChecked(checked => !checked)
+    setAgreeOnDonate(agreeOnDonate => !agreeOnDonate)
   }
-
-  useEffect(() => {
-    setTotal(checked ? calculateRoundUp(amount) : amount)
-    setTip(calculateTip(amount))
-  }, [checked, amount])
 
   return (
     <div>
       <h1>Payment</h1>
       <label htmlFor="donate-checkbox">
-        <input type="checkbox" name="donate" id="donate-checkbox" onChange={handleChange} checked={checked} />
+        <input type="checkbox" name="donate" id="donate-checkbox" onChange={handleChange} checked={agreeOnDonate} />
         I would like to donate ${tip} to charity
       </label>
-      {checked && <p>Thanks for your donation</p>}
+      {agreeOnDonate && <p>Thanks for your donation</p>}
       <div>
         <button>${total}</button>
       </div>
