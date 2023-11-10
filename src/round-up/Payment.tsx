@@ -1,5 +1,13 @@
 import { useEffect, useState } from 'react'
 
+function calculateRoundUp(amount: number) {
+  return Math.floor(amount + 1)
+}
+
+function calculateTip(amount: number) {
+  return parseFloat((calculateRoundUp(amount) - amount).toPrecision(2))
+}
+
 const Payment = ({ amount }: { amount: number }) => {
   const [total, setTotal] = useState(amount)
   const [checked, setChecked] = useState(false)
@@ -10,8 +18,8 @@ const Payment = ({ amount }: { amount: number }) => {
   }
 
   useEffect(() => {
-    setTotal(checked ? Math.floor(amount + 1) : amount)
-    setTip(parseFloat((Math.floor(amount + 1) - amount).toPrecision(2)))
+    setTotal(checked ? calculateRoundUp(amount) : amount)
+    setTip(calculateTip(amount))
   }, [checked, amount])
 
   return (
