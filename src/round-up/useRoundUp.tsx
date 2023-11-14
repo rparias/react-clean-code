@@ -8,14 +8,22 @@ function calculateTip(amount: number) {
   return parseFloat((calculateRoundUp(amount) - amount).toPrecision(2))
 }
 
-export const useRoundUp = (amount: number, agreeOnDonate: boolean) => {
+function calculateRoundUpForJP(amount: number) {
+  return Math.floor(amount/100 + 1) * 100
+}
+
+function calculateTipForJP(amount: number) {
+  return parseFloat((calculateRoundUpForJP(amount) - amount).toPrecision(2))
+}
+
+export const useRoundUp = (amount: number, agreeOnDonate: boolean, countryCode: string) => {
   const [total, setTotal] = useState(amount)
   const [tip, setTip] = useState(0)
 
   useEffect(() => {
-    setTotal(agreeOnDonate ? calculateRoundUp(amount) : amount)
-    setTip(calculateTip(amount))
-  }, [agreeOnDonate, amount])
+    setTotal(agreeOnDonate ? countryCode === "JP" ? calculateRoundUpForJP(amount) : calculateRoundUp(amount) : amount)
+    setTip(countryCode === "JP" ? calculateTipForJP(amount) : calculateTip(amount))
+  }, [agreeOnDonate, amount, countryCode])
 
   return { total, tip };
 }
