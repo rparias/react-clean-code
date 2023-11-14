@@ -7,7 +7,13 @@ type PaymentProps = {
 }
 
 function getCurrencySignByCountryCode(countryCode: string) {
-  return countryCode === 'JP' ? '¥' : '$'
+  if (countryCode === 'JP') {
+    return '¥'
+  } else if (countryCode === 'DK') {
+    return 'kr.'
+  } else if (countryCode === 'US') {
+    return '$'
+  }
 }
 
 const Payment = ({ amount, countryCode = 'US' }: PaymentProps) => {

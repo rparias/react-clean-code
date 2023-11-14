@@ -16,12 +16,32 @@ function calculateTipForJP(amount: number) {
   return parseFloat((calculateRoundUpForJP(amount) - amount).toPrecision(2))
 }
 
+function calculateRoundUpForDK(amount: number) {
+  return Math.floor(amount/10 + 1) * 10
+}
+
+function calculateTipForDK(amount: number) {
+  return parseFloat((calculateRoundUpForDK(amount) - amount).toPrecision(2))
+}
+
 function calculateTip(countryCode: string, amount: number) {
-  return countryCode === "JP" ? calculateTipForJP(amount) : calculateTipForUS(amount)
+  if (countryCode === 'JP') {
+    return calculateTipForJP(amount)
+  } else if (countryCode === 'DK') {
+    return calculateTipForDK(amount)
+  } else {
+    return calculateTipForUS(amount)
+  }
 }
 
 function calculateRoundUp(countryCode: string, amount: number) {
-  return countryCode === "JP" ? calculateRoundUpForJP(amount) : calculateRoundUpForUS(amount)
+  if (countryCode === 'JP') {
+    return calculateRoundUpForJP(amount)
+  } else if (countryCode === 'DK') {
+    return calculateRoundUpForDK(amount)
+  } else {
+    return calculateRoundUpForUS(amount)
+  }
 }
 
 export const useRoundUp = (amount: number, agreeOnDonate: boolean, countryCode: string) => {

@@ -53,4 +53,15 @@ describe('Payment', () => {
       expect(await screen.findByText('¥3500')).toBeInTheDocument()
     })
   })
+  
+  describe('Denmark Market', () => { 
+    it('shows correct amount when user selected to donate', async () => {
+      render(<Payment amount={321} countryCode="DK" />)
+      const select = screen.getByText('I would like to donate kr.9 to charity')
+      expect(select).toBeInTheDocument()
+  
+      userEvent.click(select)
+      expect(await screen.findByText('kr.330')).toBeInTheDocument()
+    })
+  })
 })
