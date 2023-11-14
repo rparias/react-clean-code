@@ -1,11 +1,16 @@
 import { useState } from 'react'
 import { useRoundUp } from './useRoundUp'
 
+type PaymentProps = {
+  amount: number
+  countryCode?: string
+}
+
 function getCurrencySignByCountryCode(countryCode: string) {
   return countryCode === 'JP' ? '¥' : '$'
 }
 
-const Payment = ({ amount, countryCode = 'US' }: { amount: number, countryCode?: string }) => {
+const Payment = ({ amount, countryCode = 'US' }: PaymentProps) => {
   const [agreeOnDonate, setAgreeOnDonate] = useState(false)
   const { total, tip } = useRoundUp(amount, agreeOnDonate, countryCode)
   const currencySign = getCurrencySignByCountryCode(countryCode)
