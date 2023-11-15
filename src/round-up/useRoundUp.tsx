@@ -1,40 +1,42 @@
 import { useEffect, useState } from 'react'
+import { CountryCode } from './types'
 
 function calculateRoundUpForUS(amount: number) {
   return Math.floor(amount + 1)
-}
-
-function calculateTipForUS(amount: number) {
-  return parseFloat((calculateRoundUpForUS(amount) - amount).toPrecision(2))
 }
 
 function calculateRoundUpForJP(amount: number) {
   return Math.floor(amount/100 + 1) * 100
 }
 
-function calculateTipForJP(amount: number) {
-  return parseFloat((calculateRoundUpForJP(amount) - amount).toPrecision(2))
-}
-
 function calculateRoundUpForDK(amount: number) {
   return Math.floor(amount/10 + 1) * 10
 }
 
-function calculateTipForDK(amount: number) {
-  return parseFloat((calculateRoundUpForDK(amount) - amount).toPrecision(2))
+function formatNumber(number: number) {
+  return parseFloat(number.toPrecision(2))
 }
 
-function calculateTip(countryCode: string, amount: number) {
+const calculateTipFor = (calculateRoundUpFor: (amount: number) => number) => (amount: number) => {
+  return formatNumber(calculateRoundUpFor(amount) - amount);
+}
+
+// closure functions
+const calculateTipForUS = calculateTipFor(calculateRoundUpForUS)
+const calculateTipForJP = calculateTipFor(calculateRoundUpForJP)
+const calculateTipForDK = calculateTipFor(calculateRoundUpForDK)
+
+function calculateTip(countryCode: CountryCode, amount: number) {
   if (countryCode === 'JP') {
-    return calculateTipForJP(amount)
+    return calculateTipForJP(amount) // calling closure with parameter
   } else if (countryCode === 'DK') {
-    return calculateTipForDK(amount)
+    return calculateTipForDK(amount) // calling closure with parameter
   } else {
-    return calculateTipForUS(amount)
+    return calculateTipForUS(amount) // calling closure with parameter
   }
 }
 
-function calculateRoundUp(countryCode: string, amount: number) {
+function calculateRoundUp(countryCode: CountryCode, amount: number) {
   if (countryCode === 'JP') {
     return calculateRoundUpForJP(amount)
   } else if (countryCode === 'DK') {
@@ -44,7 +46,7 @@ function calculateRoundUp(countryCode: string, amount: number) {
   }
 }
 
-export const useRoundUp = (amount: number, agreeOnDonate: boolean, countryCode: string) => {
+export const useRoundUp = (amount: number, agreeOnDonate: boolean, countryCode: CountryCode) => {
   const [total, setTotal] = useState(amount)
   const [tip, setTip] = useState(0)
 
