@@ -1,16 +1,9 @@
 import { useEffect, useState } from 'react'
 import { CountryCode } from './types'
 
-function calculateRoundUpForUS(amount: number) {
-  return Math.floor(amount + 1)
-}
-
-function calculateRoundUpForJP(amount: number) {
-  return Math.floor(amount/100 + 1) * 100
-}
-
-function calculateRoundUpForDK(amount: number) {
-  return Math.floor(amount/10 + 1) * 10
+const roundUpToNearestN = (exp: number) => (amount: number) => {
+  const power = Math.pow(10, exp - 1)
+  return Math.floor(amount/power + 1) * power
 }
 
 function formatNumber(number: number) {
@@ -20,6 +13,11 @@ function formatNumber(number: number) {
 const calculateTipFor = (calculateRoundUpFor: (amount: number) => number) => (amount: number) => {
   return formatNumber(calculateRoundUpFor(amount) - amount);
 }
+
+// closure functions
+const calculateRoundUpForUS = roundUpToNearestN(1)
+const calculateRoundUpForDK = roundUpToNearestN(2)
+const calculateRoundUpForJP = roundUpToNearestN(3)
 
 // closure functions
 const calculateTipForUS = calculateTipFor(calculateRoundUpForUS)
@@ -38,11 +36,11 @@ function calculateTip(countryCode: CountryCode, amount: number) {
 
 function calculateRoundUp(countryCode: CountryCode, amount: number) {
   if (countryCode === 'JP') {
-    return calculateRoundUpForJP(amount)
+    return calculateRoundUpForJP(amount) // calling closure with parameter
   } else if (countryCode === 'DK') {
-    return calculateRoundUpForDK(amount)
+    return calculateRoundUpForDK(amount) // calling closure with parameter
   } else {
-    return calculateRoundUpForUS(amount)
+    return calculateRoundUpForUS(amount) // calling closure with parameter
   }
 }
 
