@@ -6,6 +6,11 @@ const roundUpToNearestN = (exp: number) => (amount: number) => {
   return Math.floor(amount/power + 1) * power
 }
 
+// closure functions
+const roundUpToNearestInteger = roundUpToNearestN(1)
+const roundUpToNearestTen = roundUpToNearestN(2)
+const roundUpToNearestHundred = roundUpToNearestN(3)
+
 function formatNumber(number: number) {
   return parseFloat(number.toPrecision(2))
 }
@@ -14,34 +19,18 @@ const calculateTipFor = (calculateRoundUpFor: (amount: number) => number) => (am
   return formatNumber(calculateRoundUpFor(amount) - amount);
 }
 
-// closure functions
-const calculateRoundUpForUS = roundUpToNearestN(1)
-const calculateRoundUpForDK = roundUpToNearestN(2)
-const calculateRoundUpForJP = roundUpToNearestN(3)
-
-// closure functions
-const calculateTipForUS = calculateTipFor(calculateRoundUpForUS)
-const calculateTipForJP = calculateTipFor(calculateRoundUpForJP)
-const calculateTipForDK = calculateTipFor(calculateRoundUpForDK)
-
-function calculateTip(countryCode: CountryCode, amount: number) {
-  if (countryCode === 'JP') {
-    return calculateTipForJP(amount) // calling closure with parameter
-  } else if (countryCode === 'DK') {
-    return calculateTipForDK(amount) // calling closure with parameter
-  } else {
-    return calculateTipForUS(amount) // calling closure with parameter
-  }
+const algorithmMap = {
+  US: roundUpToNearestInteger,
+  DK: roundUpToNearestTen,
+  JP: roundUpToNearestHundred
 }
 
-function calculateRoundUp(countryCode: CountryCode, amount: number) {
-  if (countryCode === 'JP') {
-    return calculateRoundUpForJP(amount) // calling closure with parameter
-  } else if (countryCode === 'DK') {
-    return calculateRoundUpForDK(amount) // calling closure with parameter
-  } else {
-    return calculateRoundUpForUS(amount) // calling closure with parameter
-  }
+function getCalculateRoundUpFunc(countryCode: CountryCode) {
+  return algorithmMap[countryCode]
+}
+
+function getCalculateTipFunc(countryCode: CountryCode) {
+  return calculateTipFor(algorithmMap[countryCode])
 }
 
 export const useRoundUp = (amount: number, agreeOnDonate: boolean, countryCode: CountryCode) => {
@@ -49,8 +38,11 @@ export const useRoundUp = (amount: number, agreeOnDonate: boolean, countryCode: 
   const [tip, setTip] = useState(0)
 
   useEffect(() => {
-    setTotal(agreeOnDonate ? calculateRoundUp(countryCode, amount) : amount)
-    setTip(calculateTip(countryCode, amount))
+    const calculateRoundUp = getCalculateRoundUpFunc(countryCode)
+    const calculateTip = getCalculateTipFunc(countryCode)
+
+    setTotal(agreeOnDonate ? calculateRoundUp(amount) : amount)
+    setTip(calculateTip(amount))
   }, [agreeOnDonate, amount, countryCode])
 
   return { total, tip };
